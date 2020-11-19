@@ -1,58 +1,53 @@
-const API_URL = `https://www.prevision-meteo.ch/services/json/`
-const inputElt = document.querySelector("#formInput")
-const weatherNowListElt = document.querySelector("#weatherNowList")
-const formElt = document.querySelector("#form")
-const titleElt = document.querySelector("#title")
+console.log("Le javascript marche !")
 
-function addLiToList(list, liTextContent) {
-  let newLiElt = document.createElement("li")
-  newLiElt.textContent = liTextContent
+var formElt = document.querySelector("#form")
+var inputElt = document.querySelector("#input")
+var titleElt = document.querySelector("#title")
+var listElt = document.querySelector("#list")
 
-  list.appendChild(newLiElt)
+function addElementInList(text) {
+  var newLiElt = document.createElement("li")
+  newLiElt.textContent = text
+  listElt.appendChild(newLiElt)
 }
 
-function deleteAllLiInList(list) {
-  let liArray = list.querySelectorAll("li")
-  console.log(liArray)
-  liArray.forEach(function(li) {
-    li.style.display = "none"
-  })
-}
-
-// Permet de rechercher puis renvoyer les informations météo en fonction d'une ville donné en paramètre
-async function getWeatherDataFromCity(city) {
+function getWeatherDataByCity(city) {
+  var apiUrl = "https://www.prevision-meteo.ch/services/json/"
   
-  try { // try = on essaie le code entre {}
-    const dataToParse = await fetch( API_URL + city, {method: 'GET',}) // 
-    return await dataToParse.json()
-  } catch (error) { // si le code précédent (le try) renvoie une erreur, alors catch prend le relairs avec l'erreur en argument
-    console.log(error)
-  }
+  return fetch(apiUrl + city, {method: "GET"})
+    .then((data) => {
+      return data.json()
+    }).then((json) => {
+      return json
+    })
 }
 
 async function displayWeather(event) {
   event.preventDefault()
-
-  // Execute la fonction getWeatherDataFromCity de façon synchrone
-  // Cette fonction retourne les données météo d'une ville donné en paramètre
-  // (await = asynchrone = on attend la réponse avant de continuer le programme)
-  const weatherData = await getWeatherDataFromCity(inputElt.value)
   
-  // Mettre à jour le titre de la page
-  const cityName = weatherData.city_info.name
-  titleElt.textContent = "Météo pour " + cityName
+  // 1 récupérer le nom de la ville à aller chercher
+  var cityName = inputElt.value
+  console.log(cityName)
 
-  // Supprimer les éléments actuels de la liste 
-  deleteAllLiInList(weatherNowListElt)
+  // 2 récupérer les informations météo de cette ville
+  var weatherData = await getWeatherDataByCity(cityName)
+  console.log(weatherData)
 
-  // Ajouter des informations pour la météo actuelle
-  const currentHumidity =    weatherData.current_condition.humidity
-  const currentTemperature = weatherData.current_condition.tmp
-  const currentCondition =   weatherData.current_condition.condition
-  addLiToList(weatherNowListElt, "Humidité : "    + currentHumidity +    "%" )
-  addLiToList(weatherNowListElt, "Condition : "   + currentCondition         )
-  addLiToList(weatherNowListElt, "Température : " + currentTemperature + "°C")
+  // 3 afficher les informations dans notre site internet
+  var condition = weatherData.current_condition.condition
+  var humidity = weatherData.current_condition.humidity
+  var tmp = weatherData.current_condition.tmp
+
+  // 3.1 Changement du texte du titre
+  titleElt.textContent = "La météo du jour à " + cityName
+
+  // 3.2 Clear list element
+  listElt.innerHTML = ""
+
+  // 3.3 Ajout d'un élément dans la liste
+  addElementInList("Condition : " + condition)
+  addElementInList("Humidité : " + humidity + "%")
+  addElementInList("Température : " + tmp + "°C")
 }
 
-// Lorsque l'événement submit sera déclencher par formElt, la fonction displayWeather s'executera
 formElt.addEventListener("submit", displayWeather)

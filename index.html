@@ -4,16 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Météo</title>
-  <script src="script.js" defer></script>
+  <script defer src="index.js" ></script>
 </head>
 <body>
   <form id="form">
-    <input id="formInput" type="text" placeholder="Ville"></input>
-    <input type="submit" value="Rechercher la météo">
+    <input id="input" type="text">
+    <button>Rechercher la météo</button>
   </form>
-  <h1 id="title">Météo pour [Ville]</h1>
-  <h2>Actuellement</h2>
-  <ul id="weatherNowList">
+
+  <h1 id="title">La météo du jour à [VILLE]</h1>
+  
+  <ul id="list">
     <li></li>
   </ul>
 </body>
