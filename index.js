@@ -17,8 +17,6 @@ function getWeatherDataByCity(city) {
   return fetch(apiUrl + city, {method: "GET"})
     .then((data) => {
       return data.json()
-    }).then((json) => {
-      return json
     })
 }
 
